@@ -29,39 +29,46 @@ if st.button("Calculate"):
     else:
         d = 0.012
 
-        # ✅ حساب Spherical Equivalent (أخذ الانحراف بالحسبان)
+        # ✅ أخذ الانحراف بالحسبان
         se = sph + (cyl / 2)
 
-        # ✅ تطبيق Vertex Distance
+        # تطبيق Vertex Distance
         if abs(se) < 4:
             cl_power = se
         else:
             cl_power = se / (1 - d * se)
 
-        # تقريب لأقرب 0.25
+        # تقريب
         cl_power = round(cl_power * 4) / 4
 
-        # عرض النتيجة
         st.subheader("📊 Result:")
+
+        # ✅ النتيجة الآن تشمل الانحراف
         st.success(f"CL SPH (Adjusted): {cl_power:.2f}")
 
-        # ✅ تنبيه حسب قيمة CYL
+        # ✅ تنبيه + رابط إذا الانحراف عالي
         if cyl <= -1.50:
-            st.warning("⚠️ High astigmatism detected: Toric lenses are recommended.")
-        elif cyl <= -1.00:
-            st.info("ℹ️ Moderate astigmatism: Vision may be slightly reduced with spherical lenses.")
+            st.warning("⚠️ High astigmatism detected")
+
+            st.markdown("""
+يرجى استخدام حاسبة العدسات التوريك من الرابط التالي:
+
+🔗 https://www.jnjvisionpro.com/en-us/calculators/acuvue-fitting-calculator/
+""")
 
         st.markdown("---")
 
+# التعليمات
 st.markdown("""
 <div style='direction: rtl; text-align: right;'>
 
 ### Instructions
 
 يرجى الانتباه:
- 1. إذا كان الانحراف أقل من او يساوي 1.00D- فقد يكون الوضوح بالعدسات اللاصقة أقل من النظارة، ويصل تقريباً إلى 80% من وضوح النظارة.
- 2. إذا كان الانحراف  من 1.25D- الى 1.50-  فغالباً سيكون الوضوح بالعدسات بين 60% إلى 70% تقريباً مقارنة بالنظارة.
- 3. إذا كان الانحراف أعلى من 1.50D-  فعدسات Toric (عدسات للانحراف) هي الخيار الأفضل، لأن الوضوح بالعدسات العادية سيكون ضعيفاً.
- 4. إذا ظهر لك مقاس العدسات اللاصقة أكثر من ±4.00D الرجاء الرجوع إلى دكتور البصريات لتحديد المقاس المناسب
+ 1. إذا كان الانحراف أقل من او يساوي 1.00D- فقد يكون الوضوح أقل.
+ 2. إذا كان الانحراف من 1.25D- الى 1.50- فالرؤية متوسطة.
+ 3. إذا كان الانحراف أعلى من 1.50D- يفضل استخدام عدسات Toric.
+ 4. إذا ظهر المقاس أكثر من ±4.00D الرجاء مراجعة أخصائي بصريات.
+
 </div>
 """, unsafe_allow_html=True)

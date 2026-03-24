@@ -7,7 +7,6 @@ st.set_page_config(page_title="Contact Lens Calculator", page_icon="👁️")
 st.image("logo.png", width=500)
 
 st.title("👁️ Contact Lens Calculator")
-
 st.markdown("Enter your spectacle prescription to calculate contact lens power.")
 
 # إدخال البيانات
@@ -25,27 +24,34 @@ with col3:
 # زر الحساب
 if st.button("Calculate"):
 
-    # تحقق من المدخلات
     if axis < 0 or axis > 180:
         st.error("AXIS must be between 0 and 180")
     else:
         d = 0.012
 
-        # حساب SPH
-        if abs(sph) < 4:
-            sph_cl = sph
+        # ✅ حساب Spherical Equivalent (أخذ الانحراف بالحسبان)
+        se = sph + (cyl / 2)
+
+        # ✅ تطبيق Vertex Distance
+        if abs(se) < 4:
+            cl_power = se
         else:
-            sph_cl = sph / (1 - d * sph)
+            cl_power = se / (1 - d * se)
 
         # تقريب لأقرب 0.25
-        sph_cl = round(sph_cl * 4) / 4
+        cl_power = round(cl_power * 4) / 4
 
         # عرض النتيجة
         st.subheader("📊 Result:")
-        st.success(f"CL SPH: {sph_cl:.2f}")
+        st.success(f"CL SPH (Adjusted): {cl_power:.2f}")
 
+        # ✅ تنبيه حسب قيمة CYL
+        if cyl <= -1.50:
+            st.warning("⚠️ High astigmatism detected: Toric lenses are recommended.")
+        elif cyl <= -1.00:
+            st.info("ℹ️ Moderate astigmatism: Vision may be slightly reduced with spherical lenses.")
 
-        st.markdown("---")  # خط فاصل
+        st.markdown("---")
 
 st.markdown("""
 <div style='direction: rtl; text-align: right;'>

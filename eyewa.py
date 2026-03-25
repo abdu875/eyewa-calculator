@@ -29,29 +29,48 @@ if st.button("Calculate"):
     else:
         d = 0.012
 
-        # أخذ الانحراف بالحسبان
-        se = sph + (cyl / 2)
-
-        # حساب العدسة
-        if abs(se) < 4:
-            cl_power = se
+        # SPH = 0
+        if sph == 0:
+            cl_power = 0
         else:
-            cl_power = se / (1 - d * se)
+            if abs(cyl) > abs(sph):
+                se = sph + (cyl / 4)
+            else:
+                se = sph + (cyl / 2)
 
-        # تقريب
-        cl_power = round(cl_power * 4) / 4
+            if abs(se) < 4:
+                cl_power = se
+            else:
+                cl_power = se / (1 - d * se)
+
+            cl_power = round(cl_power * 4) / 4
 
         st.subheader("📊 Result:")
         st.success(f"CL SPH (Adjusted): {cl_power:.2f}")
 
-        # ✅ تحذير: الانحراف أعلى من الاسفير
-        if abs(cyl) > abs(sph):
-            st.error("🚨 قيمة الانحراف أعلى من الاسفير — يرجى مراجعة أخصائي بصريات فورًا")
+        # حالة خاصة (1)
+        if abs(cyl) > abs(sph) and sph != 0:
+            st.markdown("""
+            <div style='direction: rtl; text-align: right; background-color:#fff3cd; padding:10px; border-radius:8px; color:#856404; font-weight:bold;'>
+            حالة خاصة (1): تم استخدام ربع قيمة الانحراف (CYL/4) في الحساب لأن قيمة الانحراف أعلى من قيمة SPH.
+            </div>
+            """, unsafe_allow_html=True)
 
-        # ✅ تحذير الانحراف العالي + رابط
+        # حالة خاصة (2)
+        if sph == 0 and cyl != 0:
+            st.markdown("""
+            <div style='direction: rtl; text-align: right; background-color:#e6f0ff; padding:10px; border-radius:8px; color:#003366; font-weight:bold;'>
+            حالة خاصة (2): بيور استجماتيزم — عدسات التوريك هي الحل الأمثل.<br><br>
+            ملاحظة: في حال استخدام عدسات ملونة، ستكون للزينة فقط ولن تعطي تصحيحًا للنظر.
+            </div>
+            """, unsafe_allow_html=True)
+
+        # تحذير الانحراف العالي
         if cyl <= -1.50:
             st.warning("⚠️ High astigmatism detected")
 
+        # ✅ الرابط (الشرط الجديد)
+        if cyl <= -0.50:
             st.markdown("""
 يرجى استخدام حاسبة العدسات التوريك من الرابط التالي:
 

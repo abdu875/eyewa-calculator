@@ -29,10 +29,10 @@ if st.button("Calculate"):
     else:
         d = 0.012
 
-        # ✅ أخذ الانحراف بالحسبان
+        # أخذ الانحراف بالحسبان
         se = sph + (cyl / 2)
 
-        # تطبيق Vertex Distance
+        # حساب العدسة
         if abs(se) < 4:
             cl_power = se
         else:
@@ -42,11 +42,13 @@ if st.button("Calculate"):
         cl_power = round(cl_power * 4) / 4
 
         st.subheader("📊 Result:")
-
-        # ✅ النتيجة الآن تشمل الانحراف
         st.success(f"CL SPH (Adjusted): {cl_power:.2f}")
 
-        # ✅ تنبيه + رابط إذا الانحراف عالي
+        # ✅ تحذير: الانحراف أعلى من الاسفير
+        if abs(cyl) > abs(sph):
+            st.error("🚨 قيمة الانحراف أعلى من الاسفير — يرجى مراجعة أخصائي بصريات فورًا")
+
+        # ✅ تحذير الانحراف العالي + رابط
         if cyl <= -1.50:
             st.warning("⚠️ High astigmatism detected")
 
